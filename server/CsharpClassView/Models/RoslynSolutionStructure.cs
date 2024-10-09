@@ -2,13 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace CsharpClassView.Models;
 
 public interface ISolutionStructure
 {
-    // Get Projects
-    // Get Namespaces
+    public IList<string> GetProjects();
 }
 
 public class RoslynSolutionStructure(string solutionFilePath) : ISolutionStructure
@@ -16,76 +16,56 @@ public class RoslynSolutionStructure(string solutionFilePath) : ISolutionStructu
     private readonly string solutionFilePath = solutionFilePath;
     public string SolutionFilePath => solutionFilePath;
 
-    private IDictionary<string, IList<RoslynNamespaces>> projects;
+    private readonly IDictionary<string, IList<RoslynNamespaces>> projects 
+        = new SortedDictionary<string, IList<RoslynNamespaces>>();
 
+    public IList<string> GetProjects() => [.. projects.Keys];
 }
 
 public class RoslynNamespaces : IDictionary<string, IList<IRoslynUnit>>
 {
-    public IList<IRoslynUnit> this[string key] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public ICollection<string> Keys => throw new NotImplementedException();
+    private readonly IDictionary<string, IList<IRoslynUnit>> namespaces;
 
-    public ICollection<IList<IRoslynUnit>> Values => throw new NotImplementedException();
-
-    public int Count => throw new NotImplementedException();
-
-    public bool IsReadOnly => throw new NotImplementedException();
-
-    public void Add(string key, IList<IRoslynUnit> value)
+    public RoslynNamespaces()
     {
-        throw new NotImplementedException();
+        namespaces = new SortedDictionary<string, IList<IRoslynUnit>>();
     }
 
-    public void Add(KeyValuePair<string, IList<IRoslynUnit>> item)
-    {
-        throw new NotImplementedException();
+    public IList<IRoslynUnit> this[string key] { 
+        get => namespaces[key]; 
+        set => namespaces[key] = value; 
     }
 
-    public void Clear()
-    {
-        throw new NotImplementedException();
-    }
+    public ICollection<string> Keys => namespaces.Keys;
 
-    public bool Contains(KeyValuePair<string, IList<IRoslynUnit>> item)
-    {
-        throw new NotImplementedException();
-    }
+    public ICollection<IList<IRoslynUnit>> Values => namespaces.Values;
 
-    public bool ContainsKey(string key)
-    {
-        throw new NotImplementedException();
-    }
+    public int Count => namespaces.Count;
 
-    public void CopyTo(KeyValuePair<string, IList<IRoslynUnit>>[] array, int arrayIndex)
-    {
-        throw new NotImplementedException();
-    }
+    public bool IsReadOnly => namespaces.IsReadOnly;
 
-    public IEnumerator<KeyValuePair<string, IList<IRoslynUnit>>> GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
+    public void Add(string key, IList<IRoslynUnit> value) => namespaces.Add(key, value);
 
-    public bool Remove(string key)
-    {
-        throw new NotImplementedException();
-    }
+    public void Add(KeyValuePair<string, IList<IRoslynUnit>> item) => namespaces.Add(item);
 
-    public bool Remove(KeyValuePair<string, IList<IRoslynUnit>> item)
-    {
-        throw new NotImplementedException();
-    }
+    public void Clear() => namespaces.Clear();
 
-    public bool TryGetValue(string key, [MaybeNullWhen(false)] out IList<IRoslynUnit> value)
-    {
-        throw new NotImplementedException();
-    }
+    public bool Contains(KeyValuePair<string, IList<IRoslynUnit>> item) => namespaces.Contains(item);
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
+    public bool ContainsKey(string key) => namespaces.ContainsKey(key);
+
+    public void CopyTo(KeyValuePair<string, IList<IRoslynUnit>>[] array, int arrayIndex) => namespaces.CopyTo(array, arrayIndex);
+
+    public IEnumerator<KeyValuePair<string, IList<IRoslynUnit>>> GetEnumerator() => namespaces.GetEnumerator();
+
+    public bool Remove(string key) => namespaces.Remove(key);
+
+    public bool Remove(KeyValuePair<string, IList<IRoslynUnit>> item) => namespaces.Remove(item);
+
+    public bool TryGetValue(string key, [MaybeNullWhen(false)] out IList<IRoslynUnit> value) => namespaces.TryGetValue(key, out value);
+
+    IEnumerator IEnumerable.GetEnumerator() => namespaces.GetEnumerator();
 }
 
 public interface IRoslynUnit
