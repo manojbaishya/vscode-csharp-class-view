@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "CsharpClassView";
+
+package syntaxtree;
+
+service SyntaxTree {
+    rpc GetSyntaxTree (SolutionRequest) returns (SolutionStructure);
+}
+  
+message SolutionRequest {
+    string name = 2;
+}
+
+message SolutionStructure {
+    string message = 1;
+}
