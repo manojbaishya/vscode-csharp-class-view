@@ -14,10 +14,27 @@
   "contributes": {
     "commands": [
       {
-        "command": "csharp-class-view.helloWorld",
-        "title": "Hello World"
+        "command": "csharp-class-view.refreshCsharpClassExplorer",
+        "title": "Refresh Csharp Class Explorer"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "csharp-class-explorer",
+          "title": "C# Class Explorer",
+          "icon": "resources/dark/csharp-class-explorer.svg"
+        }
+      ]
+    },
+    "views": {
+      "csharp-class-explorer": [
+        {
+          "id": "csharp-class-view",
+          "name": "C# Class View"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",

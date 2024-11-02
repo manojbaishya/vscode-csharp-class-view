@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server", "server", "{C78EFB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpClassView", "server\CsharpClassView\CsharpClassView.csproj", "{64726A8C-0567-483F-8DD6-956E8613E533}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B8365D99-940D-4BAD-AFA9-E92852010061}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsharpClassView.UnitTests", "server\test\CsharpClassView.UnitTests\CsharpClassView.UnitTests.csproj", "{9DF892C5-1E06-47AE-8051-84C8EFFB4D2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,14 @@ Global
 		{64726A8C-0567-483F-8DD6-956E8613E533}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64726A8C-0567-483F-8DD6-956E8613E533}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64726A8C-0567-483F-8DD6-956E8613E533}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DF892C5-1E06-47AE-8051-84C8EFFB4D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DF892C5-1E06-47AE-8051-84C8EFFB4D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DF892C5-1E06-47AE-8051-84C8EFFB4D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DF892C5-1E06-47AE-8051-84C8EFFB4D2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{64726A8C-0567-483F-8DD6-956E8613E533} = {C78EFB20-DDE0-4C3E-97E9-CA6695C34DE7}
+		{B8365D99-940D-4BAD-AFA9-E92852010061} = {C78EFB20-DDE0-4C3E-97E9-CA6695C34DE7}
+		{9DF892C5-1E06-47AE-8051-84C8EFFB4D2C} = {B8365D99-940D-4BAD-AFA9-E92852010061}
 	EndGlobalSection
 EndGlobal
