@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -30,7 +31,9 @@ public interface ISolutionStructure
 /// <param name="solutionFilePath">Path to solution file in filesystem.</param>
 public class RoslynSolution(string solutionFilePath) : ISolutionStructure
 {
-    private readonly string solutionFilePath = solutionFilePath;
+    private readonly string _solutionFilePath = solutionFilePath;
+
+    public string Name => Path.GetFileName(_solutionFilePath);
     private readonly IDictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>> projects
         = new Dictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>>();
     public IDictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>> Projects => projects;
@@ -38,8 +41,10 @@ public class RoslynSolution(string solutionFilePath) : ISolutionStructure
 
     public async Task AnalyzeSolutionAsync()
     {
+        MSBuildLocator.RegisterDefaults();
+        
         using var workspace = MSBuildWorkspace.Create();
-        Solution solution = await workspace.OpenSolutionAsync(solutionFilePath);
+        Solution solution = await workspace.OpenSolutionAsync(_solutionFilePath);
         
         if (!solution.Projects.Any()) return;
 
@@ -141,6 +146,14 @@ public class RoslynNamespace(string name)
 public interface IRoslynUnit
 {
     string Name { get; }
+
+    
+}
+
+public class RoslynInterface(string name) : IRoslynUnit
+{
+    public string Name => name;
+    public IList<string> Methods { get; set; } = [];
 }
 
 public class RoslynClass(string name) : IRoslynUnit
@@ -153,13 +166,13 @@ public class RoslynClass(string name) : IRoslynUnit
     public IList<string> Fields { get; set; } = [];
 
     public IList<RoslynClass>? BaseTypes { get; set; } = [];
+    public IList<RoslynInterface>? BaseInterfaces { get; set; } = [];
 
 }
 
 public class RoslynEnum(string name) : IRoslynUnit
 {
-    private readonly string name = name;
-    public string Name => name;
+    public string Name { get; } = name;
 
     public IList<string> Options { get; set; } = [];
 }

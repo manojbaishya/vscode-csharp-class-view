@@ -1,17 +1,57 @@
 syntax = "proto3";
 
-option csharp_namespace = "CsharpClassView";
+option csharp_namespace = "CsharpClassView.Protos";
 
 package syntaxtree;
 
-service SyntaxTree {
-    rpc GetSyntaxTree (SolutionRequest) returns (SolutionStructure);
+service RoslynSyntaxTree {
+    rpc Parse (SolutionLocation) returns (RoslynSolutionMessage);
 }
   
-message SolutionRequest {
-    string name = 2;
+message SolutionLocation {
+    string path = 1;
 }
 
-message SolutionStructure {
-    string message = 1;
+message RoslynSolutionMessage {
+    string name = 2;
+
+    repeated RoslynProjectMessage roslyn_projects = 3;
+}
+
+message RoslynProjectMessage {
+    string name = 4;
+
+    repeated RoslynNamespaceMessage roslyn_namespaces = 5;
+}
+
+message RoslynNamespaceMessage {
+    string name = 6;
+
+    repeated RoslynInterfaceMessage roslyn_interfaces = 7;
+    repeated RoslynClassMessage roslyn_classes = 8;
+    repeated RoslynEnumMessage roslyn_enums = 9;
+}
+
+message RoslynInterfaceMessage {
+    string name = 10;
+
+    repeated string methods = 11;
+}
+
+message RoslynClassMessage {
+    string name = 12;
+
+    repeated string constructors = 13;
+    repeated string methods = 14;
+    repeated string properties = 15;
+    repeated string fields = 16;
+
+    repeated string base_classes = 17;
+    repeated string base_interfaces = 18;
+}
+
+message RoslynEnumMessage {
+    string name = 19;
+
+    repeated string options = 20;
 }

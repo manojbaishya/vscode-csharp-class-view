@@ -5,6 +5,18 @@
 	"tasks": [
 		{
             "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/CsharpClassView.sln"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch-extension",
             "dependsOn": [
                 "npm: watch:tsc",
                 "npm: watch:esbuild"
@@ -59,6 +71,30 @@
 				"npm: watch-tests"
 			],
 			"problemMatcher": []
-		}
+        },
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/CsharpClassView.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/CsharpClassView.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile"
+        }
 	]
 }
