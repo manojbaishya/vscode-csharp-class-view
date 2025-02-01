@@ -1,0 +1,94 @@
+{
+  "name": "TestSolution.sln",
+  "roslynProjects": [
+    {
+      "name": "TestProject1",
+      "roslynNamespaces": [
+        {
+          "name": "TestProject1",
+          "roslynClasses": [
+            {
+              "name": "TestProgram1Main",
+              "methods": [
+                "Main"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TestProject1.Models",
+          "roslynClasses": [
+            {
+              "name": "Employee",
+              "properties": [
+                "Id",
+                "Name"
+              ]
+            },
+            {
+              "name": "Account",
+              "properties": [
+                "Id",
+                "Employee"
+              ]
+            }
+          ],
+          "roslynEnums": [
+            {
+              "name": "AccountType",
+              "options": [
+                "Checking",
+                "Savings"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TestProject2",
+      "roslynNamespaces": [
+        {
+          "name": "TestProject2",
+          "roslynClasses": [
+            {
+              "name": "TestProgram2Main",
+              "methods": [
+                "Main"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TestProject2.Models",
+          "roslynClasses": [
+            {
+              "name": "Factory",
+              "properties": [
+                "Id",
+                "Name"
+              ]
+            },
+            {
+              "name": "Material",
+              "properties": [
+                "Id",
+                "Factory"
+              ]
+            }
+          ],
+          "roslynEnums": [
+            {
+              "name": "MaterialType",
+              "options": [
+                "Untraceable",
+                "Batch",
+                "Serial"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
