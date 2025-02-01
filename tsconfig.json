@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"module": "Node16",
+		"module": "NodeNext",
 		"target": "ES2022",
 		"lib": [
 			"ES2022"
@@ -12,6 +12,7 @@
 		"noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
 		"noUnusedParameters": true,  /* Report errors on unused parameters. */
 		"noImplicitThis": true, /* Report errors on implicit this. */
-		"sourceRoot": "src"
+		"sourceRoot": "src",
+		"resolveJsonModule": true
 	}
 }

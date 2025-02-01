@@ -1,0 +1,3 @@
+{
+    "SOLUTION_PARSER_GRPC_SERVICE": "http://localhost:5000"
+}

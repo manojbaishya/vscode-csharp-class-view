@@ -1,26 +1,33 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { CsharpClassView as CsharpClassViewDataProvider } from './CsharpClassView';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+	console.log('Activating C# Class View...');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "csharp-class-view" is now active!');
+	const isWorkspaceOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0;
+	const workspaceRoot = isWorkspaceOpen ? vscode.workspace.workspaceFolders![0].uri.fsPath : undefined;
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('csharp-class-view.refreshCsharpClassExplorer', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from C# Class View!');
-	});
+	if (workspaceRoot) {
 
-	context.subscriptions.push(disposable);
+		const csharpClassView = new CsharpClassViewDataProvider(workspaceRoot);
+		await csharpClassView.initializeCache();
+		const csharpClassViewDataProvider = vscode.window.registerTreeDataProvider('csharpClassView', csharpClassView);
+		context.subscriptions.push(csharpClassViewDataProvider);
+
+		const csharpClassViewRefreshCommand 
+			= vscode.commands.registerCommand(
+				'csharpClassView.refreshCsharpClassExplorer', 
+				() => csharpClassView.refresh()
+			);
+		context.subscriptions.push(csharpClassViewRefreshCommand);
+
+
+		console.log('Activated C# Class View!');
+	} else {
+		console.log('No workspace is open!');
+	}
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+	console.log('Deactivated C# Class View!');
+}

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using CsharpClassView.Models;
 using CsharpClassView.Protos;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CsharpClassView.Mappers;
 
