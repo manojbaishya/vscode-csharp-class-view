@@ -1,0 +1,9 @@
+proto < ../server/CsharpClassView/Protos/syntaxtree.proto
+@host=127.0.0.1:5000
+
+###
+
+GRPC /RoslynSyntaxTree/Parse
+{
+  "path": "../../../Test/TestSolution/TestSolution.sln"
+}

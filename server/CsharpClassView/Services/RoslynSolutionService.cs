@@ -15,14 +15,18 @@ public class RoslynSolutionService(ILogger<RoslynSolutionService> logger) : Rosl
 
     public override async Task<RoslynSolutionMessage> Parse(SolutionLocation solutionLocation, ServerCallContext context)
     {
+        _logger.LogInformation("Parsing solution at {Path}", solutionLocation.Path);
         string solutionPath = solutionLocation.Path;
         RoslynSolution roslynSolution= new(solutionPath);
 
         await roslynSolution.AnalyzeSolutionAsync();
 
-        var mapper = new RoslynSolutionMapper(roslynSolution);
-        RoslynSolutionMessage response = mapper.Map();
+        _logger.LogInformation("Completed parsing solution at {Path}", solutionLocation.Path);
 
+        RoslynSolutionMapper mapper = new(roslynSolution);
+        RoslynSolutionMessage response = mapper.Map();
+        
+        _logger.LogInformation("Mapped response.");
         return response;
     }
 }

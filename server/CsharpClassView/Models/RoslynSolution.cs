@@ -5,11 +5,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CsharpClassView.Models;
 
@@ -28,24 +31,40 @@ public interface ISolutionStructure
 /// Third level children are classes and enums.
 /// Fourth level children are class members - fields, methods, constructors, properties, inner classes and inner enums, etc.
 /// </summary>
-/// <param name="solutionFilePath">Path to solution file in filesystem.</param>
-public class RoslynSolution(string solutionFilePath) : ISolutionStructure
+public class RoslynSolution : ISolutionStructure
 {
-    private readonly string _solutionFilePath = solutionFilePath;
+    private readonly ILogger<RoslynSolution> _logger;
+    private readonly string _solutionFilePath;
+
+    /// <param name="solutionFilePath">Path to solution file in filesystem.</param>
+    public RoslynSolution(string solutionFilePath)
+    {
+        _solutionFilePath = solutionFilePath;
+        _logger = NullLogger<RoslynSolution>.Instance;
+    }
+
+    public RoslynSolution(string solutionFilePath, ILogger<RoslynSolution> logger)
+    {
+        _solutionFilePath = solutionFilePath;
+        _logger = logger;
+
+    }
 
     public string Name => Path.GetFileName(_solutionFilePath);
     private readonly IDictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>> projects
         = new Dictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>>();
+
+
     public IDictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>> Projects => projects;
-    public IList<string> GetProjectNames() => [.. projects.Keys.Select(project => project.Name).ToList()];
+    public IList<string> GetProjectNames() => [.. Projects.Keys.Select(project => project.Name)];
 
     public async Task AnalyzeSolutionAsync()
     {
-        MSBuildLocator.RegisterDefaults();
-        
+        if (MSBuildLocator.CanRegister) MSBuildLocator.RegisterDefaults();
+
         using var workspace = MSBuildWorkspace.Create();
         Solution solution = await workspace.OpenSolutionAsync(_solutionFilePath);
-        
+
         if (!solution.Projects.Any()) return;
 
         foreach (Project project in solution.Projects)
@@ -53,12 +72,14 @@ public class RoslynSolution(string solutionFilePath) : ISolutionStructure
             Compilation? compilation = await project.GetCompilationAsync();
             if (compilation == null)
             {
-                Console.Error.WriteLine($"Compilation of project: '{project.Name}' failed.");
+                _logger.LogError("Compilation of project: '{project.Name}' failed.", project.Name);
                 continue;
             }
 
             RoslynProject roslynProject = new(project.Name);
-            IDictionary<RoslynNamespace, ISet<IRoslynUnit>> namespacesByFile = new Dictionary<RoslynNamespace, ISet<IRoslynUnit>>();
+            IDictionary<RoslynNamespace, ISet<IRoslynUnit>> namespacesByFile
+                = new Dictionary<RoslynNamespace, ISet<IRoslynUnit>>();
+
             foreach (Document document in project.Documents)
             {
                 SyntaxTree? syntaxTree = await document.GetSyntaxTreeAsync();
@@ -80,6 +101,7 @@ public class RoslynSolution(string solutionFilePath) : ISolutionStructure
         {
             INamespaceSymbol? namespaceSymbol = model.GetDeclaredSymbol(namespaceNode);
             if (namespaceSymbol is null) continue;
+
             RoslynNamespace roslynNamespace = new(namespaceSymbol.ToDisplayString());
             if (!namespacesByFile.ContainsKey(roslynNamespace)) namespacesByFile[roslynNamespace] = new HashSet<IRoslynUnit>();
 
@@ -119,10 +141,9 @@ public class RoslynSolution(string solutionFilePath) : ISolutionStructure
                 if (model.GetDeclaredSymbol(enumNode) is not INamedTypeSymbol enumSymbol) continue;
                 RoslynEnum roslynEnum = new(enumSymbol.Name)
                 {
-                    Options = enumSymbol.GetMembers()
+                    Options = [.. enumSymbol.GetMembers()
                                                     .Where(static member => member.Kind is SymbolKind.Field)
-                                                    .Select(static symbol => symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
-                                                    .ToList()
+                                                    .Select(static symbol => symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))]
                 };
 
                 namespacesByFile[roslynNamespace].Add(roslynEnum);
@@ -147,7 +168,7 @@ public interface IRoslynUnit
 {
     string Name { get; }
 
-    
+
 }
 
 public class RoslynInterface(string name) : IRoslynUnit

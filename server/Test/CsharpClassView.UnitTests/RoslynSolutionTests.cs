@@ -21,7 +21,7 @@ public class RoslynSolutionTests(ITestOutputHelper output)
         string solutionPath = @$"{Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)?.Parent?.Parent?.Parent?.FullName}/TestSolution/TestSolution.sln";
         output.WriteLine($"TestSolution path is '{solutionPath}'");
         
-        RoslynSolution roslynSolution= new(solutionPath);
+        RoslynSolution roslynSolution = new(solutionPath);
 
         await roslynSolution.AnalyzeSolutionAsync();
 
