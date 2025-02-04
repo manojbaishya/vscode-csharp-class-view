@@ -17,14 +17,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "csharp-class-view",
+          "id": "csharpClassView",
           "title": "C# Class Explorer",
           "icon": "resources/dark/csharp-class-view.svg"
         }
       ]
     },
     "views": {
-      "csharp-class-view": [
+      "csharpClassView": [
         {
           "id": "csharpClassView",
           "name": "C# Class View",
@@ -33,16 +33,41 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "csharpClassView",
+        "contents": "Compiling solution. Please wait..."
+      }
+    ],
     "commands": [
       {
+        "command": "csharpClassView.collapseCsharpClassExplorer",
+        "title": "Collapse C# Class View",
+        "icon": "$(collapse-all)"
+      },
+      {
         "command": "csharpClassView.refreshCsharpClassExplorer",
-        "title": "Refresh",
+        "title": "Refresh C# Class View",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
         }
       }
-    ]
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "csharpClassView.collapseCsharpClassExplorer",
+          "when": "view == csharpClassView",
+          "group": "navigation"
+        },
+        {
+          "command": "csharpClassView.refreshCsharpClassExplorer",
+          "when": "view == csharpClassView",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",

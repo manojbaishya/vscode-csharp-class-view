@@ -1,13 +1,12 @@
 import path from 'path';
 import * as vscode from 'vscode';
 import { randomUUID } from 'crypto';
-import * as RoslynSolutionService from './RoslynSolutionService';
-import { RoslynClassMessage, RoslynEnumMessage, RoslynInterfaceMessage, RoslynProjectMessage, RoslynSolutionMessage } from './gen/syntaxtree_pb';
+import { RoslynSolutionService, RoslynSolution, RoslynClass, RoslynInterface, RoslynEnum, RoslynType } from './RoslynSolutionService';
 
 export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
 
     private solutionPath: string | undefined;
-    private solutionStructure: RoslynSolutionMessage | undefined;
+    private solutionStructure: RoslynSolution | undefined;
 
     constructor(private workspaceRoot: string | undefined) {
         if (!this.workspaceRoot) {
@@ -34,12 +33,12 @@ export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
         }
 
         try {
-            this.solutionStructure = await RoslynSolutionService.getSolutionStructure(this.solutionPath!);
+            const roslynSolutionService = new RoslynSolutionService(this.solutionPath!);
+            this.solutionStructure = await roslynSolutionService.getSolution();
         } catch (error) {
             console.error("Error parsing solution structure at '", this.solutionPath, "': ", error);
             this.solutionStructure = undefined;
         }
-
     }
 
     async getChildren(element?: SolutionUnit): Promise<SolutionUnit[]> {
@@ -59,7 +58,10 @@ export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
     private _onDidChangeTreeData: vscode.EventEmitter<SolutionUnit | undefined | void> = new vscode.EventEmitter<SolutionUnit | undefined | void>();
     readonly onDidChangeTreeData: vscode.Event<SolutionUnit | undefined | void> = this._onDidChangeTreeData.event;
 
-    refresh(): void { this._onDidChangeTreeData.fire(); }
+    async refresh(): Promise<void> {
+        await this.initializeCache(); 
+        this._onDidChangeTreeData.fire(); 
+    }
 
     private getRoslynUnits(node: SolutionUnit | null = null): SolutionUnit[] {
         if (!this.solutionStructure) {
@@ -67,60 +69,56 @@ export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
         }
 
         if (node === null) {
-            return [new SolutionUnit(this.solutionStructure.name, "Solution", null, vscode.TreeItemCollapsibleState.Collapsed)];
+            return [new SolutionUnit(this.solutionStructure.Name, "Solution", null, vscode.TreeItemCollapsibleState.Expanded)];
         }
 
         if (node.typeId === "Solution") {
-            return this.solutionStructure.roslynProjects
-                .map(project => new SolutionUnit(project.name, "Project", node, vscode.TreeItemCollapsibleState.Collapsed));
+            return [...this.solutionStructure.Projects.keys()]
+                .map(project => new SolutionUnit(project, "Project", node, vscode.TreeItemCollapsibleState.Collapsed));
         }
 
         if (node.typeId === "Project") {
-            return this.solutionStructure.roslynProjects.find(project => project.name === node.label)!
-                .roslynNamespaces.map(ns => new SolutionUnit(ns.name, "Namespace", node, vscode.TreeItemCollapsibleState.Collapsed));
+            return [...this.solutionStructure.Projects.get(node.label)?.keys()!]
+                .map(ns => new SolutionUnit(ns, "Namespace", node, vscode.TreeItemCollapsibleState.Collapsed));
         }
 
         if (node.typeId === "Namespace") {
-            const namespace = this.solutionStructure.roslynProjects.find(project => project.name === node.parent?.label)!.roslynNamespaces.find(ns => ns.name === node.label);
+            const namespace = this.solutionStructure.Projects.get(node.parent?.label!)!.get(node.label);
             if (!namespace) { return []; }
-
-            const classes = namespace.roslynClasses.map(cls => new SolutionUnit(cls.name, "Class", node, vscode.TreeItemCollapsibleState.Collapsed));
-            const interfaces = namespace.roslynInterfaces.map(intf => new SolutionUnit(intf.name, "Interface", node, vscode.TreeItemCollapsibleState.Collapsed));
-            const enums = namespace.roslynEnums.map(enm => new SolutionUnit(enm.name, "Enum", node, vscode.TreeItemCollapsibleState.Collapsed));
-            return [...classes, ...interfaces, ...enums];
+            return [...namespace.values()].map(roslynUnit => new SolutionUnit(roslynUnit.Name, roslynUnit.GetType() as RoslynType, node, vscode.TreeItemCollapsibleState.Collapsed));
         }
 
         if (node.typeId === "Class") {
-            const roslynClass = this.solutionStructure.roslynProjects.find(project => project.name === node.parent?.parent?.label)!.roslynNamespaces.find(ns => ns.name === node.parent?.label)!.roslynClasses.find(cls => cls.name === node.label);
+            const roslynClass = this.solutionStructure.Projects.get(node.parent?.parent?.label!)!.get(node.parent?.label!)!.get(node.label) as RoslynClass;
 
             if (!roslynClass) { return []; }
 
-            const constructors = roslynClass.constructors.map(ctor => new SolutionUnit(ctor, "ClassMember", node, vscode.TreeItemCollapsibleState.None));
-            const methods = roslynClass.methods.map(method => new SolutionUnit(method, "ClassMember", node, vscode.TreeItemCollapsibleState.None));
-            const properties = roslynClass.properties.map(prop => new SolutionUnit(prop, "ClassMember", node, vscode.TreeItemCollapsibleState.None));
-            const fields = roslynClass.fields.map(field => new SolutionUnit(field, "ClassMember", node, vscode.TreeItemCollapsibleState.None));
-            const baseClasses = roslynClass.baseClasses.map(cls => new SolutionUnit(cls, "ClassMember", node, vscode.TreeItemCollapsibleState.None));
-            const baseInterfaces = roslynClass.baseInterfaces.map(intf => new SolutionUnit(intf, "ClassMember", node, vscode.TreeItemCollapsibleState.None));
+            const constructors = roslynClass.Constructors.map(ctor => new SolutionUnit(ctor, "Constructor", node, vscode.TreeItemCollapsibleState.None));
+            const methods = roslynClass.Methods.map(method => new SolutionUnit(method, "Method", node, vscode.TreeItemCollapsibleState.None));
+            const properties = roslynClass.Properties.map(prop => new SolutionUnit(prop, "Property", node, vscode.TreeItemCollapsibleState.None));
+            const fields = roslynClass.Fields.map(field => new SolutionUnit(field, "Field", node, vscode.TreeItemCollapsibleState.None));
+            const baseClasses = roslynClass.BaseTypes.map(cls => new SolutionUnit(cls, "Class", node, vscode.TreeItemCollapsibleState.None));
+            const baseInterfaces = roslynClass.BaseInterfaces.map(intf => new SolutionUnit(intf, "Interface", node, vscode.TreeItemCollapsibleState.None));
 
             return [...constructors, ...methods, ...properties, ...fields, ...baseClasses, ...baseInterfaces];
         }
 
         if (node.typeId === "Interface") {
-            const roslynInterface = this.solutionStructure.roslynProjects.find(project => project.name === node.parent?.parent?.label)!.roslynNamespaces.find(ns => ns.name === node.parent?.label)!.roslynInterfaces.find(intf => intf.name === node.label);
+            const roslynInterface = this.solutionStructure.Projects.get(node.parent?.parent?.label!)!.get(node.parent?.label!)!.get(node.label) as RoslynInterface;
 
             if (!roslynInterface) { return []; }
 
-            const methods = roslynInterface.methods.map(method => new SolutionUnit(method, "InterfaceMember", node, vscode.TreeItemCollapsibleState.None));
+            const methods = roslynInterface.Methods.map(method => new SolutionUnit(method, "Method", node, vscode.TreeItemCollapsibleState.None));
 
             return methods;
         }
 
         if (node.typeId === "Enum") {
-            const roslynEnum = this.solutionStructure.roslynProjects.find(project => project.name === node.parent?.parent?.label)!.roslynNamespaces.find(ns => ns.name === node.parent?.label)!.roslynEnums.find(enm => enm.name === node.label);
+            const roslynEnum = this.solutionStructure.Projects.get(node.parent?.parent?.label!)!.get(node.parent?.label!)!.get(node.label) as RoslynEnum;
 
             if (!roslynEnum) { return []; }
 
-            const methods = roslynEnum.options.map(opt => new SolutionUnit(opt, "EnumMember", node, vscode.TreeItemCollapsibleState.None));
+            const methods = roslynEnum.Options.map(opt => new SolutionUnit(opt, "Option", node, vscode.TreeItemCollapsibleState.None));
 
             return methods;
         }
@@ -128,8 +126,6 @@ export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
         return [];
     }
 }
-
-type RoslynType = "Solution" | "Project" | "Namespace" | "Interface" | "InterfaceMember" | "Enum" | "EnumMember" | "Class" | "ClassMember";
 
 export class SolutionUnit extends vscode.TreeItem {
 
@@ -139,10 +135,37 @@ export class SolutionUnit extends vscode.TreeItem {
         this.id = randomUUID();
         this.tooltip = this.label;
         this.description = this.typeId.toString();
+
+        this.iconPath = this.getIconPath(this.typeId);
     }
 
-    iconPath = {
-        light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
-        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
-    };
+    private getIconPath(typeId: RoslynType): vscode.ThemeIcon {
+        switch (typeId) {
+            case 'Solution':
+                return new vscode.ThemeIcon('package');
+            case 'Project':
+                return new vscode.ThemeIcon('folder-library');
+            case 'Namespace':
+                return new vscode.ThemeIcon('symbol-namespace');
+            case 'Interface':
+                return new vscode.ThemeIcon('symbol-interface');
+            case 'Enum':
+                return new vscode.ThemeIcon('symbol-enum');
+            case 'Option':
+                return new vscode.ThemeIcon('symbol-enum-member');
+            case 'Class':
+                return new vscode.ThemeIcon('symbol-class');
+            case 'Constructor':
+                return new vscode.ThemeIcon('symbol-constructor');
+            case 'Method':
+                return new vscode.ThemeIcon('symbol-method');
+            case 'Property':
+                return new vscode.ThemeIcon('symbol-property');
+            case 'Field':
+                return new vscode.ThemeIcon('symbol-field');
+            default:
+                return new vscode.ThemeIcon('symbol-key');
+        }
+    }
+
 }

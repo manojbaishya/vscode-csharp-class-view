@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,7 +50,7 @@ public class RoslynSolution : ISolutionStructure
 
     public string Name => Path.GetFileName(_solutionFilePath);
     private readonly IDictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>> projects
-        = new Dictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>>();
+        = new SortedDictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>>();
 
 
     public IDictionary<RoslynProject, IDictionary<RoslynNamespace, ISet<IRoslynUnit>>> Projects => projects;
@@ -78,7 +76,7 @@ public class RoslynSolution : ISolutionStructure
 
             RoslynProject roslynProject = new(project.Name);
             IDictionary<RoslynNamespace, ISet<IRoslynUnit>> namespacesByFile
-                = new Dictionary<RoslynNamespace, ISet<IRoslynUnit>>();
+                = new SortedDictionary<RoslynNamespace, ISet<IRoslynUnit>>();
 
             foreach (Document document in project.Documents)
             {
@@ -97,9 +95,9 @@ public class RoslynSolution : ISolutionStructure
 
     private static void ExtractNamespaceAndClassesFromSourceFile(SyntaxNode node, SemanticModel model, IDictionary<RoslynNamespace, ISet<IRoslynUnit>> namespacesByFile)
     {
-        foreach (NamespaceDeclarationSyntax namespaceNode in node.DescendantNodes().OfType<NamespaceDeclarationSyntax>())
+        foreach (BaseNamespaceDeclarationSyntax namespaceNode in node.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>())
         {
-            INamespaceSymbol? namespaceSymbol = model.GetDeclaredSymbol(namespaceNode);
+            INamespaceSymbol? namespaceSymbol = (INamespaceSymbol?) model.GetDeclaredSymbol(namespaceNode);
             if (namespaceSymbol is null) continue;
 
             RoslynNamespace roslynNamespace = new(namespaceSymbol.ToDisplayString());
@@ -147,28 +145,42 @@ public class RoslynSolution : ISolutionStructure
                 };
 
                 namespacesByFile[roslynNamespace].Add(roslynEnum);
+
+                foreach (var interfaceNode in namespaceNode.DescendantNodes().OfType<InterfaceDeclarationSyntax>())
+                {
+                    if (model.GetDeclaredSymbol(interfaceNode) is not INamedTypeSymbol interfaceSymbol) continue;
+                    RoslynInterface roslynInterface = new(interfaceSymbol.Name)
+                    {
+                        Methods = [.. interfaceSymbol.GetMembers()
+                                                .Where(static member => member.Kind is SymbolKind.Method)
+                                                .Select(static symbol => symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))]
+                    };
+
+                    namespacesByFile[roslynNamespace].Add(roslynInterface);
+                }
             }
         }
     }
 }
 
-public class RoslynProject(string name)
+public class RoslynProject(string name) : IComparable<RoslynProject>
 {
-    private readonly string name = name;
-    public string Name => name;
+    public string Name { get; } = name;
+
+    public int CompareTo(RoslynProject? other) => Name.CompareTo(other?.Name);
 }
 
-public class RoslynNamespace(string name)
+public class RoslynNamespace(string name) : IComparable<RoslynNamespace>
 {
     private readonly string name = name;
     public string Name => name;
+
+    public int CompareTo(RoslynNamespace? other) => Name.CompareTo(other?.Name);
 }
 
 public interface IRoslynUnit
 {
     string Name { get; }
-
-
 }
 
 public class RoslynInterface(string name) : IRoslynUnit

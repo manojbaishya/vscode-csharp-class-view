@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
 import { CsharpClassView as CsharpClassViewDataProvider } from './CsharpClassView';
+import { createLogger, Logger } from './logger';
 
 export async function activate(context: vscode.ExtensionContext) {
-	console.log('Activating C# Class View...');
+	const output = vscode.window.createOutputChannel("C# Class View");
+	const logger: Logger = createLogger(output);
+	logger.log('Activating C# Class View...');
 
 	const isWorkspaceOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0;
 	const workspaceRoot = isWorkspaceOpen ? vscode.workspace.workspaceFolders![0].uri.fsPath : undefined;
@@ -14,20 +17,20 @@ export async function activate(context: vscode.ExtensionContext) {
 		const csharpClassViewDataProvider = vscode.window.registerTreeDataProvider('csharpClassView', csharpClassView);
 		context.subscriptions.push(csharpClassViewDataProvider);
 
-		const csharpClassViewRefreshCommand 
-			= vscode.commands.registerCommand(
-				'csharpClassView.refreshCsharpClassExplorer', 
-				() => csharpClassView.refresh()
-			);
-		context.subscriptions.push(csharpClassViewRefreshCommand);
+		const collapseCsharpClassExplorer = vscode.commands.registerCommand(
+			'csharpClassView.collapseCsharpClassExplorer',
+			() => vscode.commands.executeCommand('workbench.actions.treeView.csharpClassView.collapseAll'));
+		context.subscriptions.push(collapseCsharpClassExplorer);
 
+		const refreshCsharpClassExplorer = vscode.commands.registerCommand(
+				'csharpClassView.refreshCsharpClassExplorer',
+				async () => await csharpClassView.refresh());
+		context.subscriptions.push(refreshCsharpClassExplorer);
 
-		console.log('Activated C# Class View!');
+		logger.log('Activated C# Class View!');
 	} else {
-		console.log('No workspace is open!');
+		logger.log('No workspace is open!');
 	}
 }
 
-export function deactivate() {
-	console.log('Deactivated C# Class View!');
-}
+export function deactivate() { }

@@ -4,5 +4,11 @@ proto < ../server/CsharpClassView/Protos/syntaxtree.proto
 ###
 GRPC /RoslynSyntaxTree/Parse
 {
-  "path": "../../../Test/TestSolution/TestSolution.sln"
+  "path": "../../../../../Test/TestSolution/TestSolution.sln"
+}
+
+###
+GRPC /RoslynSyntaxTree/Parse
+{
+  "path": "D:/Dev/Projects/Test/CleanArchitecture/CleanArchitecture.sln"
 }

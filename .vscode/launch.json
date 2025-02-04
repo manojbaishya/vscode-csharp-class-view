@@ -6,11 +6,39 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run Extension",
+			"name": "Run Extension - TestSolution",
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
                 "${workspaceFolder}/server/Test/TestSolution",
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}",
+            "sourceMaps": true
+        },
+        {
+			"name": "Run Extension - Bitwarden",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+                "D:/Dev/Projects/Libraries/C#.NET/Bitwarden-Server",
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}",
+            "sourceMaps": true
+        },
+        {
+			"name": "Run Extension - CleanArchitecture",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+                "D:/Dev/Projects/Libraries/C#.NET/CleanArchitecture",
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [

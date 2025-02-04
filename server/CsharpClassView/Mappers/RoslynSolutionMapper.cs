@@ -54,6 +54,16 @@ public class RoslynSolutionMapper(RoslynSolution roslynSolution)
 
                             namespaceMessage.RoslynEnums.Add(enumMessage);
                             break;
+                        case RoslynInterface roslynInterface:
+                            var interfaceMessage = new RoslynInterfaceMessage
+                            {
+                                Name = roslynInterface.Name
+                            };
+
+                            interfaceMessage.Methods.AddRange(roslynInterface.Methods);
+
+                            namespaceMessage.RoslynInterfaces.Add(interfaceMessage);
+                            break;
                         default:
                             break;
                     }
