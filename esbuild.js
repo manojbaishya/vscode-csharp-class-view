@@ -42,10 +42,10 @@ async function main() {
 			esbuildProblemMatcherPlugin,
 		],
 		external: [
+			'vscode',
 			'./server/*',
 			'./docs/*',
 			'./scripts/*',
-			'vscode',
 			'src/test/*',
 		]
 	});

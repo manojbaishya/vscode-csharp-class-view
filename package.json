@@ -39,7 +39,7 @@
         {
           "id": "csharpClassView",
           "title": "C# Class Explorer",
-          "icon": "resources/dark/csharp-class-view.svg"
+          "icon": "resources/dark/csharp-class-view.png"
         }
       ]
     },
@@ -48,7 +48,7 @@
         {
           "id": "csharpClassView",
           "name": "C# Class View",
-          "icon": "resources/dark/csharp-class-view.svg",
+          "icon": "resources/dark/csharp-class-view.png",
           "contextualTitle": "Namespace Explorer"
         }
       ]
@@ -69,8 +69,8 @@
         "command": "csharpClassView.refreshCsharpClassExplorer",
         "title": "Refresh C# Class View",
         "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
+          "light": "resources/light/refresh.png",
+          "dark": "resources/dark/refresh.png"
         }
       }
     ],
@@ -92,11 +92,11 @@
   "scripts": {
     "vscode:prepublish": "pnpm run esbuild-base --minify",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production && pnpm vsce package --no-dependencies",
     "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
     "publish": "pnpm vsce publish --no-dependencies",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
