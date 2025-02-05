@@ -24,7 +24,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
-                "D:/Dev/Projects/Libraries/C#.NET/Bitwarden-Server",
+                "../../../../../C#.NET/Bitwarden-Server",
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [
@@ -38,7 +38,21 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
-                "D:/Dev/Projects/Libraries/C#.NET/CleanArchitecture",
+                "../../../../../C#.NET/CleanArchitecture",
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}",
+            "sourceMaps": true
+        },
+        {
+			"name": "Run Extension (Linux) - CleanArchitecture",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+                "../../../../../Projects/Test/CleanArchitectureLinux",
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [

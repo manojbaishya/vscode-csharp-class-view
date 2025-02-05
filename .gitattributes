@@ -1,0 +1,4 @@
+CsharpClassViewLinuxX64 filter=lfs diff=lfs merge=lfs -text
+server/Dist/CsharpClassViewLinuxX64 filter=lfs diff=lfs merge=lfs -text
+server/Dist/CsharpClassViewOsxX64 filter=lfs diff=lfs merge=lfs -text
+server/Dist/CsharpClassViewWinX64.exe filter=lfs diff=lfs merge=lfs -text

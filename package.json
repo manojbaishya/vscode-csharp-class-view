@@ -1,13 +1,32 @@
 {
   "name": "csharp-class-view",
   "displayName": "C# Class View",
-  "description": "C# Class View displays namespaces, types, interfaces, enumerations, and classes, and the lower pane displays the members that belong to the type selected in the upper pane.",
-  "version": "0.0.1",
+  "description": "C# Class View displays solution projects, namespaces, classes, interfaces and enumerations in a tree view.",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.94.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/manojbaishya/vscode-csharp-class-view"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/manojbaishya/vscode-csharp-class-view/issues"
+  },
+  "homepage": "https://github.com/manojbaishya/vscode-csharp-class-view",
   "categories": [
+    "Programming Languages",
+    "Visualization",
+    "Education",
     "Other"
+  ],
+  "keywords": [
+    "dotnet",
+    ".net",
+    "c#",
+    "namespace",
+    "hierarchy"
   ],
   "activationEvents": [
     "workspaceContains:**/.sln"

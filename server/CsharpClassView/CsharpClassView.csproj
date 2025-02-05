@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>false</SelfContained>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -12,6 +11,16 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+   <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <EmitEntryPointDebugInformation>false</EmitEntryPointDebugInformation>
+    <Optimize>true</Optimize>
+    <IncludeSymbolsInSingleFile>false</IncludeSymbolsInSingleFile>
+    <RemoveOutputResourceFiles>true</RemoveOutputResourceFiles>
   </PropertyGroup>
 
   <ItemGroup>

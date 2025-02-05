@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as childProcess from 'child_process';
 import { CsharpClassView as CsharpClassViewDataProvider } from './CsharpClassView';
 import { createLogger, Logger } from './logger';
 
@@ -6,6 +7,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	const output = vscode.window.createOutputChannel("C# Class View");
 	const logger: Logger = createLogger(output);
 	logger.log('Activating C# Class View...');
+
+	const process = childProcess.spawn('/home/manoj/Code/vscode-extensions/csharp-class-view/CsharpClassViewLinuxX64');
+	await new Promise(resolve => setTimeout(resolve, 5000));
+
+	
 
 	const isWorkspaceOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0;
 	const workspaceRoot = isWorkspaceOpen ? vscode.workspace.workspaceFolders![0].uri.fsPath : undefined;

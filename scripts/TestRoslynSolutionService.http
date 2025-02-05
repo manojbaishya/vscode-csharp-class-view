@@ -10,5 +10,5 @@ GRPC /RoslynSyntaxTree/Parse
 ###
 GRPC /RoslynSyntaxTree/Parse
 {
-  "path": "D:/Dev/Projects/Test/CleanArchitecture/CleanArchitecture.sln"
+  "path": "../../../Projects/Test/CleanArchitecture/CleanArchitecture.sln"
 }
