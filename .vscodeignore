@@ -12,3 +12,12 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+
+CsharpClassView.sln
+buf.gen.yaml
+buf.yaml
+docs/**
+scripts/**
+server/**
+package.json
+pnpm-lock.yaml

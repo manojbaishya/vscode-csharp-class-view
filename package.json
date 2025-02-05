@@ -1,10 +1,11 @@
 {
+  "type": "module",
   "name": "csharp-class-view",
   "displayName": "C# Class View",
   "description": "C# Class View displays solution projects, namespaces, classes, interfaces and enumerations in a tree view.",
   "version": "0.1.1",
   "engines": {
-    "vscode": "^1.94.0"
+    "vscode": "^1.96.0"
   },
   "repository": {
     "type": "git",
@@ -89,12 +90,14 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run package",
+    "vscode:prepublish": "pnpm run esbuild-base --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "publish": "pnpm vsce publish --no-dependencies",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
@@ -102,6 +105,7 @@
     "lint": "eslint src",
     "test": "vscode-test",
     "clean": "rimraf ./dist ./out"
+
   },
   "devDependencies": {
     "@bufbuild/buf": "^1.50.0",
@@ -111,6 +115,7 @@
     "@connectrpc/connect-node": "^2.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "~20.17.16",
+    "@types/node-fetch": "^2.6.12",
     "@types/vscode": "^1.96.0",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.22.0",

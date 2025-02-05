@@ -1,7 +1,7 @@
 import { createClient, Transport } from "@connectrpc/connect";
 import { createGrpcTransport } from "@connectrpc/connect-node";
-import { RoslynSolutionMessage, RoslynSyntaxTree } from "./gen/syntaxtree_pb";
-import appconfig from "../appconfig.json";
+import { RoslynSolutionMessage, RoslynSyntaxTree } from "./gen/syntaxtree_pb.js";
+import appconfig from "../appconfig.json" assert { type: "json" };
 
 const transport = createGrpcTransport({
     baseUrl: appconfig.SOLUTION_PARSER_GRPC_SERVICE!,

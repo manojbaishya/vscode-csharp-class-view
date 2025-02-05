@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as childProcess from 'child_process';
-import { CsharpClassView as CsharpClassViewDataProvider } from './CsharpClassView';
-import { createLogger, Logger } from './logger';
+import { CsharpClassView as CsharpClassViewDataProvider } from './CsharpClassView.js';
+import { createLogger, Logger } from './logger.js';
 
 export async function activate(context: vscode.ExtensionContext) {
 	const output = vscode.window.createOutputChannel("C# Class View");

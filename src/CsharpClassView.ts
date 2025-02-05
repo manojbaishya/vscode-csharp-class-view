@@ -1,7 +1,6 @@
-import path from 'path';
 import * as vscode from 'vscode';
 import { randomUUID } from 'crypto';
-import { RoslynSolutionService, RoslynSolution, RoslynClass, RoslynInterface, RoslynEnum, RoslynType } from './RoslynSolutionService';
+import { RoslynSolutionService, RoslynSolution, RoslynClass, RoslynInterface, RoslynEnum, RoslynType } from './RoslynSolutionService.js';
 
 export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
 
