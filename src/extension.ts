@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
 import * as childProcess from 'child_process';
-import { CsharpClassView as CsharpClassViewDataProvider } from './CsharpClassView.js';
-import { createLogger, Logger } from './logger.js';
+import { CsharpClassView as CsharpClassViewDataProvider } from './CsharpClassView';
+import { createLogger, Logger } from './logger';
 
 export async function activate(context: vscode.ExtensionContext) {
 	const output = vscode.window.createOutputChannel("C# Class View");
 	const logger: Logger = createLogger(output);
 	logger.log('Activating C# Class View...');
 
-	const process = childProcess.spawn('/home/manoj/Code/vscode-extensions/csharp-class-view/CsharpClassViewLinuxX64');
-	await new Promise(resolve => setTimeout(resolve, 5000));
+	// const process = childProcess.spawn('/home/manoj/Code/vscode-extensions/csharp-class-view/CsharpClassViewLinuxX64');
+	// await new Promise(resolve => setTimeout(resolve, 5000));
 
 	
 

@@ -1,29 +1,14 @@
 import { createClient, Transport } from "@connectrpc/connect";
 import { createGrpcTransport } from "@connectrpc/connect-node";
-import { RoslynSolutionMessage, RoslynSyntaxTree } from "./gen/syntaxtree_pb.js";
-import appconfig from "../appconfig.json" assert { type: "json" };
+import { RoslynSolutionMessage, RoslynSyntaxTree } from "./gen/syntaxtree_pb";
+// import appconfig from "../appconfig.json";
 
-const transport = createGrpcTransport({
-    baseUrl: appconfig.SOLUTION_PARSER_GRPC_SERVICE!,
-    interceptors: []
-});
-
-export async function getSolutionStructure(solutionPath: string): Promise<RoslynSolutionMessage> {
-    const roslynSyntaxTree = createClient(RoslynSyntaxTree, transport);
-    try {
-        const solutionStructure: RoslynSolutionMessage = await roslynSyntaxTree.parse({ path: solutionPath });
-        return Promise.resolve(solutionStructure);
-    } catch (error) {
-        console.error("Error parsing solution structure: ", error);
-        return Promise.reject(error);
-    }
-}
 
 export class RoslynSolutionService {
     constructor(private readonly solutionPath: string)  { }
 
     private readonly transport: Transport = createGrpcTransport({
-        baseUrl: appconfig.SOLUTION_PARSER_GRPC_SERVICE!,
+        baseUrl: "http://localhost:5000",
         interceptors: []
     });
 

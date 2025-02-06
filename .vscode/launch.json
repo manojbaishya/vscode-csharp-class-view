@@ -38,7 +38,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
-                "../../../../../C#.NET/CleanArchitecture",
+                "/home/manoj/Data/Dev/Projects/Test/CleanArchitectureLinux",
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [

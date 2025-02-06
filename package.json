@@ -1,5 +1,4 @@
 {
-  "type": "module",
   "name": "csharp-class-view",
   "displayName": "C# Class View",
   "description": "C# Class View displays solution projects, namespaces, classes, interfaces and enumerations in a tree view.",
