@@ -28,17 +28,17 @@ async function main() {
 		entryPoints: [
 			'src/extension.ts'
 		],
-		bundle: true,
+		outfile: 'dist/extension.js',
+		platform: 'node',
 		format: 'cjs',
+		bundle: true,
 		minify: production,
 		sourcemap: !production,
 		sourcesContent: false,
-		platform: 'node',
-		outfile: 'dist/extension.js',
 		external: ['vscode'],
 		logLevel: 'silent',
+		treeShaking: true,
 		plugins: [
-			/* add to the end of plugins array */
 			esbuildProblemMatcherPlugin,
 		],
 	});

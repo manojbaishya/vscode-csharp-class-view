@@ -1,14 +1,14 @@
 import { createClient, Transport } from "@connectrpc/connect";
 import { createGrpcTransport } from "@connectrpc/connect-node";
 import { RoslynSolutionMessage, RoslynSyntaxTree } from "./gen/syntaxtree_pb";
-// import appconfig from "../appconfig.json";
 
 
 export class RoslynSolutionService {
-    constructor(private readonly solutionPath: string)  { }
-
+    constructor(private readonly solutionPath: string)  {}
+    
+    private readonly GRPC_PORT: string = process.env.GRPC_PORT!;
     private readonly transport: Transport = createGrpcTransport({
-        baseUrl: "http://localhost:5000",
+        baseUrl: `http://localhost:${this.GRPC_PORT}`,
         interceptors: []
     });
 

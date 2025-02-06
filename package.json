@@ -90,24 +90,21 @@
     }
   },
   "scripts": {
-    "build": "pnpm esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --platform=node --format=cjs",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --platform=node --format=cjs",
-    "vscode:prepublish": "pnpm run esbuild-base --minify",
-    "packageNoVsix": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
-    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production && pnpm vsce package --no-dependencies",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "build": "node esbuild.js --production",
+    "compile": "pnpm run check-types && pnpm run lint && pnpm run build",
+    "package": "pnpm run compile && pnpm vsce package --no-dependencies",
+    "vscode:prepublish": "pnpm run package",
+    "publish": "pnpm vsce publish --no-dependencies",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "publish": "pnpm vsce publish --no-dependencies",
     "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "watch-tests": "tsc -p . -w --outDir out",
     "test": "vscode-test",
     "clean": "rimraf ./dist ./out"
-
   },
   "devDependencies": {
     "@bufbuild/buf": "^1.50.0",
