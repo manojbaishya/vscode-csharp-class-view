@@ -52,7 +52,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
-                "../../../../../Projects/Test/CleanArchitectureLinux",
+                "/home/manoj/Data/Dev/Projects/Test/CleanArchitectureLinux",
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [

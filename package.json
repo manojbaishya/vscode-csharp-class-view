@@ -47,6 +47,7 @@
         {
           "id": "csharpClassView",
           "name": "C# Class View",
+          "type": "tree",
           "icon": "resources/dark/csharp-class-view.png",
           "contextualTitle": "Namespace Explorer"
         }
@@ -89,9 +90,13 @@
     }
   },
   "scripts": {
+    "build": "pnpm esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --platform=node --format=cjs",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --platform=node --format=cjs",
     "vscode:prepublish": "pnpm run esbuild-base --minify",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "packageNoVsix": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
     "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production && pnpm vsce package --no-dependencies",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
     "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
@@ -100,8 +105,6 @@
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
-    "check-types": "tsc --noEmit",
-    "lint": "eslint src",
     "test": "vscode-test",
     "clean": "rimraf ./dist ./out"
 

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as childProcess from 'child_process';
+import childProcess from 'child_process';
 import { CsharpClassView as CsharpClassViewDataProvider } from './CsharpClassView';
 import { createLogger, Logger } from './logger';
 
@@ -8,16 +8,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	const logger: Logger = createLogger(output);
 	logger.log('Activating C# Class View...');
 
-	// const process = childProcess.spawn('/home/manoj/Code/vscode-extensions/csharp-class-view/CsharpClassViewLinuxX64');
-	// await new Promise(resolve => setTimeout(resolve, 5000));
-
-	
-
 	const isWorkspaceOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0;
 	const workspaceRoot = isWorkspaceOpen ? vscode.workspace.workspaceFolders![0].uri.fsPath : undefined;
 
 	if (workspaceRoot) {
-
 		const csharpClassView = new CsharpClassViewDataProvider(workspaceRoot);
 		await csharpClassView.initializeCache();
 		const csharpClassViewDataProvider = vscode.window.registerTreeDataProvider('csharpClassView', csharpClassView);
@@ -29,8 +23,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		context.subscriptions.push(collapseCsharpClassExplorer);
 
 		const refreshCsharpClassExplorer = vscode.commands.registerCommand(
-				'csharpClassView.refreshCsharpClassExplorer',
-				async () => await csharpClassView.refresh());
+			'csharpClassView.refreshCsharpClassExplorer',
+			async () => await csharpClassView.refresh());
 		context.subscriptions.push(refreshCsharpClassExplorer);
 
 		logger.log('Activated C# Class View!');
