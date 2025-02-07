@@ -2,6 +2,8 @@
 
 C# Class View displays solution projects, namespaces, classes, interfaces and enums in a tree view.
 
+Download from marketplace: [marketplace.visualstudio.com/items?itemName=manojbaishya.csharp-class-view](https://marketplace.visualstudio.com/items?itemName=manojbaishya.csharp-class-view)
+
 ## Features
 
 View the logical structure of your solution divided into projects and namespaces, without compiling to assemblies.
