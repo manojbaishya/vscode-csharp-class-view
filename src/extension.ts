@@ -24,8 +24,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 	const serverPort: number = await getRandomAvailablePortInLocalhost();
 	process.env.GRPC_PORT = serverPort.toString();
-
-	serverOutput.show();
 	
 	const serverPath = context.asAbsolutePath('./compiler/CsharpClassView.dll');
 	serverOutput.appendLine(`Starting GRPC server on port: '${serverPort}' from path: '${serverPath}'`);
@@ -77,7 +75,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const isWorkspaceOpen = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0;
 	const workspaceRoot = isWorkspaceOpen ? vscode.workspace.workspaceFolders![0].uri.fsPath : undefined;
 	if (workspaceRoot) {
-		const csharpClassView = new CsharpClassViewDataProvider(workspaceRoot);
+		const csharpClassView = new CsharpClassViewDataProvider(workspaceRoot, logger);
 		await csharpClassView.initializeCache();
 		const csharpClassViewDataProvider = vscode.window.registerTreeDataProvider('csharpClassView', csharpClassView);
 		context.subscriptions.push(csharpClassViewDataProvider);

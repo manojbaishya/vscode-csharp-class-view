@@ -1,26 +1,29 @@
-# csharp-class-view README
+# C# Class View
 
-C# Class View displays solution projects, namespaces, classes, interfaces and enumerations in a tree view.
+C# Class View displays solution projects, namespaces, classes, interfaces and enums in a tree view.
 
 ## Features
 
-TODO
+View the logical structure of your solution divided into projects and namespaces, without compiling to assemblies.
 
 ## Requirements
 
-TODO
+.NET 8+ installed and `dotnet` command available on PATH.
 
 ## Extension Settings
 
-TODO
+None.
+
 ## Known Issues
 
-TODO
+Please file a bug at [vscode-csharp-class-view/issues](https://github.com/manojbaishya/vscode-csharp-class-view/issues).
+
+## Licenses and Attribution
+
+Extension Icon from [flaticon.com](https://www.flaticon.com/free-icons/geometry).
 
 ## Release Notes
 
-TODO
+### 0.1.1
 
-### 1.0.0
-
-TODO
+Initial version.

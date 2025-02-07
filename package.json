@@ -1,8 +1,10 @@
 {
   "name": "csharp-class-view",
   "displayName": "C# Class View",
-  "description": "C# Class View displays solution projects, namespaces, classes, interfaces and enumerations in a tree view.",
+  "publisher": "manojbaishya",
+  "description": "C# Class View displays solution projects, namespaces, classes, interfaces and enums in a tree view.",
   "version": "0.1.1",
+  "icon": "resources/csharp_class_view_extension.png",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -56,7 +58,7 @@
     "viewsWelcome": [
       {
         "view": "csharpClassView",
-        "contents": "Compiling solution. Please wait..."
+        "contents": "Open a folder with a .sln extension to view its logical hierarchy here."
       }
     ],
     "commands": [
@@ -68,10 +70,7 @@
       {
         "command": "csharpClassView.refreshCsharpClassExplorer",
         "title": "Refresh C# Class View",
-        "icon": {
-          "light": "resources/light/refresh.png",
-          "dark": "resources/dark/refresh.png"
-        }
+        "icon": "$(refresh)"
       }
     ],
     "menus": {
@@ -95,14 +94,9 @@
     "build": "node esbuild.js --production",
     "compile": "pnpm run check-types && pnpm run lint && pnpm run build",
     "package": "pnpm run compile && pnpm vsce package --no-dependencies",
-    "vscode:prepublish": "pnpm run package",
     "publish": "pnpm vsce publish --no-dependencies",
-    "watch": "npm-run-all -p watch:*",
-    "watch:esbuild": "node esbuild.js --watch",
-    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "compile-tests": "tsc -p . --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
-    "watch-tests": "tsc -p . -w --outDir out",
     "test": "vscode-test",
     "clean": "rimraf ./dist ./out"
   },

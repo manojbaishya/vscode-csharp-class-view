@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { randomUUID } from 'crypto';
+import { Logger } from './logger';
 import { RoslynSolutionService, RoslynSolution, RoslynClass, RoslynInterface, RoslynEnum, RoslynType } from './RoslynSolutionService';
 
 export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
@@ -7,9 +8,9 @@ export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
     private solutionPath: string | undefined;
     private solutionStructure: RoslynSolution | undefined;
 
-    constructor(private workspaceRoot: string | undefined) {
+    constructor(private workspaceRoot: string | undefined, private readonly logger: Logger) {
         if (!this.workspaceRoot) {
-            console.error('No workspace root provided!');
+            this.logger.log('No workspace root provided!');
         }
     }
 
@@ -18,7 +19,7 @@ export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
 
         if (solutionFiles.length === 0) {
             this.solutionPath = undefined;
-            console.error('No solution files found in the workspace!');
+            this.logger.log('No solution files found in the workspace!');
             return;
         }
 
@@ -32,17 +33,17 @@ export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
         }
 
         try {
-            const roslynSolutionService = new RoslynSolutionService(this.solutionPath!);
+            const roslynSolutionService = new RoslynSolutionService(this.solutionPath!, this.logger);
             this.solutionStructure = await roslynSolutionService.getSolution();
         } catch (error) {
-            console.error("Error parsing solution structure at '", this.solutionPath, "': ", error);
+            this.logger.log(`Error parsing solution structure at '${this.solutionPath}', error ${error}`);
             this.solutionStructure = undefined;
         }
     }
 
     async getChildren(element?: SolutionUnit): Promise<SolutionUnit[]> {
         if (!this.solutionStructure) {
-            console.error('Solution structure has not been cached!');
+            this.logger.log('Solution structure has not been cached!');
             return Promise.resolve([]);
         }
 
@@ -58,8 +59,10 @@ export class CsharpClassView implements vscode.TreeDataProvider<SolutionUnit> {
     readonly onDidChangeTreeData: vscode.Event<SolutionUnit | undefined | void> = this._onDidChangeTreeData.event;
 
     async refresh(): Promise<void> {
+        this.logger.log("Refreshing C# Class View.");
         await this.initializeCache(); 
-        this._onDidChangeTreeData.fire(); 
+        this._onDidChangeTreeData.fire();
+        this.logger.log("Refreshed C# Class View!");
     }
 
     private getRoslynUnits(node: SolutionUnit | null = null): SolutionUnit[] {

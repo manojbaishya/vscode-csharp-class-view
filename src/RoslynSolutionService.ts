@@ -1,10 +1,11 @@
 import { createClient, Transport } from "@connectrpc/connect";
 import { createGrpcTransport } from "@connectrpc/connect-node";
 import { RoslynSolutionMessage, RoslynSyntaxTree } from "./gen/syntaxtree_pb";
+import { Logger } from "./logger";
 
 
 export class RoslynSolutionService {
-    constructor(private readonly solutionPath: string)  {}
+    constructor(private readonly solutionPath: string, private readonly logger: Logger)  {}
     
     private readonly GRPC_PORT: string = process.env.GRPC_PORT!;
     private readonly transport: Transport = createGrpcTransport({
@@ -19,7 +20,7 @@ export class RoslynSolutionService {
             const solutionStructure: RoslynSolutionMessage = await this.roslynSyntaxTree.parse({ path: this.solutionPath });
             return Promise.resolve(solutionStructure);
         } catch (error) {
-            console.error("Error parsing solution structure: ", error);
+            this.logger.log(`Error parsing solution structure: ${error}`);
             return Promise.reject(error);
         }
     }
